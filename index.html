@@ -177,6 +177,36 @@
   .nw-total{font-size:2rem;font-weight:800;color:var(--mint-deep);text-align:center;margin:6px 0}
   .section-title{font-weight:800;font-size:1.05rem;margin:6px 0 12px}
 
+  /* ---- spending tracker ---- */
+  .month-nav{display:flex;align-items:center;justify-content:space-between;gap:10px;
+    background:#fff;border-radius:999px;box-shadow:var(--shadow);padding:8px 10px;margin-bottom:18px}
+  .month-nav button{border:none;background:#eef6fb;color:var(--pink-deep);cursor:pointer;
+    width:40px;height:40px;border-radius:50%;font-size:1.1rem;font-weight:800;transition:.15s}
+  .month-nav button:hover{background:var(--pink-deep);color:#fff}
+  .month-nav button:disabled{opacity:.3;cursor:not-allowed;background:#eef6fb;color:var(--pink-deep)}
+  .month-nav .mlabel{font-weight:800;font-size:1.05rem;text-align:center;flex:1}
+  .month-nav .mlabel span{display:block;font-size:.72rem;color:var(--muted);font-weight:700}
+
+  .spend-total{font-size:2.1rem;font-weight:800;color:var(--pink-deep);text-align:center;margin:6px 0 2px}
+  .spend-sub{text-align:center;color:var(--muted);font-size:.85rem;font-weight:600}
+
+  .cat-row{display:flex;align-items:center;gap:11px;margin-bottom:14px}
+  .cat-row .ic{width:40px;height:40px;flex:none;display:grid;place-items:center;border-radius:12px;
+    background:#eef6fb;font-size:1.2rem}
+  .cat-row .mid{flex:1;min-width:0}
+  .cat-row .mid .top{display:flex;justify-content:space-between;font-weight:700;font-size:.9rem;margin-bottom:5px}
+  .cat-row .mid .top .nm{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .cat-row .mid .top .amt{color:var(--pink-deep);font-weight:800;white-space:nowrap}
+  .cat-row .bar{height:9px}
+  .cat-pct{font-size:.74rem;color:var(--muted);font-weight:700;width:38px;text-align:right;flex:none}
+
+  .exp{display:flex;align-items:center;gap:11px;background:#f7f1e2;border-radius:13px;padding:10px 13px;margin-bottom:9px}
+  .exp .ic{width:36px;height:36px;flex:none;display:grid;place-items:center;border-radius:10px;background:#fff;font-size:1.1rem}
+  .exp .info{flex:1;min-width:0}
+  .exp .info b{display:block;font-size:.92rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .exp .info span{font-size:.76rem;color:var(--muted);font-weight:600}
+  .exp .ea{font-weight:800;color:var(--ink);white-space:nowrap}
+
   .toast{
     position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(120px);
     background:var(--ink);color:#fff;padding:14px 22px;border-radius:14px;font-weight:700;
@@ -193,6 +223,7 @@
 
 <div class="tabs">
   <button class="tab active" data-tab="wishlist">🎁 Wishlist</button>
+  <button class="tab" data-tab="spending">📊 Spending</button>
   <button class="tab" data-tab="networth">💰 Net Worth</button>
 </div>
 
@@ -238,6 +269,66 @@
     </div>
 
     <div id="list"></div>
+  </section>
+
+  <!-- SPENDING PAGE -->
+  <section id="spending" class="page">
+    <div class="month-nav">
+      <button id="prevMonth" title="Previous month">‹</button>
+      <div class="mlabel" id="monthLabel">—<span>monthly spending</span></div>
+      <button id="nextMonth" title="Next month">›</button>
+    </div>
+
+    <div class="card">
+      <div class="section-title">💸 This month's spending</div>
+      <div class="spend-total" id="spendTotal">Rp0</div>
+      <div class="spend-sub" id="spendCount">No expenses logged yet</div>
+    </div>
+
+    <div class="card">
+      <div class="section-title">➕ Add an expense</div>
+      <div class="row">
+        <div class="field" style="flex:2;min-width:160px">
+          <label>What was it?</label>
+          <input id="eName" placeholder="e.g. Lunch, Grab ride">
+        </div>
+        <div class="field">
+          <label>Amount (Rp)</label>
+          <input id="eAmount" type="number" min="0" placeholder="50000">
+        </div>
+      </div>
+      <div class="row">
+        <div class="field">
+          <label>Category</label>
+          <select id="eCat">
+            <option value="🍜 Food">🍜 Food</option>
+            <option value="🚗 Transport">🚗 Transport</option>
+            <option value="🛍️ Shopping">🛍️ Shopping</option>
+            <option value="🏠 Bills">🏠 Bills</option>
+            <option value="🎮 Fun">🎮 Fun</option>
+            <option value="💊 Health">💊 Health</option>
+            <option value="📚 Education">📚 Education</option>
+            <option value="🎁 Gifts">🎁 Gifts</option>
+            <option value="✨ Other">✨ Other</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Date</label>
+          <input id="eDate" type="date">
+        </div>
+      </div>
+      <button class="btn" id="addExp">Add expense</button>
+    </div>
+
+    <div class="card">
+      <div class="section-title">📊 Tally by category</div>
+      <div id="catTally"></div>
+    </div>
+
+    <div class="card">
+      <div class="section-title">🧾 All expenses this month</div>
+      <div id="expList"></div>
+    </div>
   </section>
 
   <!-- NET WORTH PAGE -->
@@ -295,10 +386,13 @@ const todayISO = () => new Date().toISOString().slice(0,10);
 let state = load();
 
 function load(){
-  try{ return JSON.parse(localStorage.getItem('wishlistApp')) || blank(); }
+  try{
+    const s = JSON.parse(localStorage.getItem('wishlistApp')) || blank();
+    return Object.assign(blank(), s);
+  }
   catch(e){ return blank(); }
 }
-function blank(){ return { items:[], accounts:[], xp:0, streak:0 }; }
+function blank(){ return { items:[], accounts:[], expenses:[], xp:0, streak:0 }; }
 
 /* ---------- gamification: XP & levels ---------- */
 const LEVELS=[
@@ -550,11 +644,117 @@ function renderList(){
 
 function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
 
+/* ---------- spending tracker ---------- */
+const CAT_COLORS=['#4a93c4','#3fb997','#ffb55a','#e07a8b','#9b8cd6','#5bb5c4','#d49a4a','#7fb069','#9aa3ae'];
+let curMonth = todayISO().slice(0,7);   // 'YYYY-MM'
+
+function monthsWithData(){
+  const set=new Set(state.expenses.map(e=>e.date.slice(0,7)));
+  set.add(todayISO().slice(0,7));
+  return [...set].sort();              // ascending
+}
+function monthName(ym){
+  const [y,m]=ym.split('-');
+  return new Date(y,m-1,1).toLocaleDateString('en-GB',{month:'long',year:'numeric'});
+}
+function expensesFor(ym){
+  return state.expenses
+    .filter(e=>e.date.slice(0,7)===ym)
+    .sort((a,b)=>b.date.localeCompare(a.date) || b.id-a.id);
+}
+
+function renderSpending(){
+  const list = expensesFor(curMonth);
+  const total = list.reduce((s,e)=>s+(Number(e.amount)||0),0);
+
+  $('#monthLabel').innerHTML = monthName(curMonth)+'<span>monthly spending</span>';
+  $('#spendTotal').textContent = fmt(total);
+  $('#spendCount').textContent = list.length
+    ? list.length+' expense'+(list.length>1?'s':'')+' logged'
+    : 'No expenses logged yet';
+
+  // arrow availability
+  const months = monthsWithData();
+  $('#prevMonth').disabled = curMonth <= months[0];
+  $('#nextMonth').disabled = curMonth >= todayISO().slice(0,7);
+
+  // ---- tally by category ----
+  const tally={};
+  list.forEach(e=>{ tally[e.cat]=(tally[e.cat]||0)+(Number(e.amount)||0); });
+  const cats=Object.entries(tally).sort((a,b)=>b[1]-a[1]);
+  const ct=$('#catTally');
+  if(!cats.length){
+    ct.innerHTML='<div class="empty"><span class="em">📊</span>Nothing to tally yet — add an expense above!</div>';
+  } else {
+    ct.innerHTML = cats.map(([cat,amt],i)=>{
+      const pct = total?Math.round(amt/total*100):0;
+      const em = cat.split(' ')[0];
+      const nm = cat.replace(/^\S+\s/,'');
+      const col = CAT_COLORS[i%CAT_COLORS.length];
+      return `<div class="cat-row">
+        <span class="ic">${em}</span>
+        <div class="mid">
+          <div class="top"><span class="nm">${esc(nm)}</span><span class="amt">${fmt(amt)}</span></div>
+          <div class="bar"><i style="width:${pct}%;background:${col}"></i></div>
+        </div>
+        <span class="cat-pct">${pct}%</span>
+      </div>`;
+    }).join('');
+  }
+
+  // ---- full expense list ----
+  const el=$('#expList');
+  if(!list.length){
+    el.innerHTML='<div class="empty"><span class="em">🧾</span>No expenses this month.</div>';
+  } else {
+    el.innerHTML = list.map(e=>{
+      const em=e.cat.split(' ')[0];
+      const dt=new Date(e.date+'T00:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'short'});
+      return `<div class="exp">
+        <span class="ic">${em}</span>
+        <div class="info"><b>${esc(e.name||e.cat.replace(/^\S+\s/,''))}</b>
+          <span>${esc(e.cat.replace(/^\S+\s/,''))} · ${dt}</span></div>
+        <span class="ea">${fmt(e.amount)}</span>
+        <button class="btn danger tiny" data-delexp="${e.id}">✕</button>
+      </div>`;
+    }).join('');
+    el.querySelectorAll('[data-delexp]').forEach(b=>b.onclick=()=>{
+      state.expenses=state.expenses.filter(x=>x.id!=b.dataset.delexp);
+      save(); renderSpending();
+    });
+  }
+}
+
+$('#prevMonth').onclick=()=>{
+  const months=monthsWithData(); const i=months.indexOf(curMonth);
+  if(i>0){ curMonth=months[i-1]; renderSpending(); }
+};
+$('#nextMonth').onclick=()=>{
+  const months=monthsWithData(); const i=months.indexOf(curMonth);
+  if(i<months.length-1 && curMonth<todayISO().slice(0,7)){ curMonth=months[i+1]; renderSpending(); }
+};
+
+$('#addExp').onclick=()=>{
+  const name=$('#eName').value.trim();
+  const amount=Number($('#eAmount').value)||0;
+  const cat=$('#eCat').value;
+  const date=$('#eDate').value || todayISO();
+  if(!amount) return toast('Add an amount 💸');
+  state.expenses.push({id:Date.now(),name,amount,cat,date});
+  save();
+  curMonth=date.slice(0,7);                 // jump to the month it landed in
+  $('#eName').value=''; $('#eAmount').value=''; $('#eDate').value=todayISO();
+  renderSpending();
+  toast('Expense logged 🧾 '+fmt(amount));
+};
+
 /* init */
 $('#wDate').value=todayISO();
+$('#eDate').value=todayISO();
 updateEstimate();
 renderNW();
 renderList();
+renderSpending();
 renderXP();
 </script>
 </body>
