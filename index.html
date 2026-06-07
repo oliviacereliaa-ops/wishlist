@@ -62,12 +62,15 @@
 
   .savings-banner{
     background:linear-gradient(135deg,#fff,#eef6fb);
-    border-radius:var(--radius);padding:18px 22px;box-shadow:var(--shadow);
-    margin-bottom:18px;display:flex;align-items:center;justify-content:space-between;gap:12px;
+    border-radius:var(--radius);padding:16px;box-shadow:var(--shadow);
+    margin-bottom:18px;display:flex;align-items:center;justify-content:space-between;gap:8px;
   }
-  .savings-banner small{color:var(--muted);font-weight:600}
-  .savings-banner .amt{font-size:1.5rem;font-weight:800;color:var(--mint-deep)}
-  .xpbar{height:7px;width:120px;background:#e6eef2;border-radius:999px;overflow:hidden;margin:5px auto 0}
+  .savings-banner > div{flex:1;min-width:0}
+  .savings-banner small{color:var(--muted);font-weight:600;font-size:.72rem;display:block;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .savings-banner .amt{font-size:clamp(.95rem,4vw,1.5rem);font-weight:800;color:var(--mint-deep);
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .xpbar{height:7px;width:100%;max-width:120px;background:#e6eef2;border-radius:999px;overflow:hidden;margin:5px auto 0}
   .xpbar > i{display:block;height:100%;width:0;border-radius:999px;background:linear-gradient(90deg,var(--lilac),var(--pink-deep));transition:width .5s}
 
   /* ---- tally summary ---- */
@@ -81,6 +84,9 @@
   .tstat .k{font-size:.72rem;color:var(--muted);font-weight:700;margin-top:3px}
   .tally .bar{margin-top:14px}
   .tally-pct{text-align:center;font-weight:800;color:var(--pink-deep);margin-top:8px;font-size:.9rem}
+  .tally-asset{text-align:center;font-weight:600;color:var(--ink);margin-top:10px;font-size:.84rem;
+    background:#fff;border-radius:12px;padding:8px 12px}
+  .tally-asset b{color:var(--pink-deep)}
 
   /* ---- per-item percent chip ---- */
   .pct-chip{display:inline-block;margin-top:6px;background:var(--pink-deep);color:#fff;
@@ -423,7 +429,10 @@ function renderList(){
         <div class="tstat"><div class="v green">${fmt(tSaved)}</div><div class="k">SAVED SO FAR</div></div>
       </div>
       <div class="bar"><i style="width:${tPct}%"></i></div>
-      <div class="tally-pct">${tPct}% of all your wishlist goals saved 💪</div>`;
+      <div class="tally-pct">${tPct}% of all your wishlist goals saved 💪</div>
+      ${savings>0
+        ? `<div class="tally-asset">🎯 Your whole wishlist is <b>${Math.round(tVal/savings*100)}%</b> of your assets (${fmt(savings)})</div>`
+        : `<div class="tally-asset">Add your assets on the <b>Net Worth</b> tab to see what % of them your wishlist is.</div>`}`;
     list.appendChild(tally);
   }
 
