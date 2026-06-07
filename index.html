@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>My Wishlist & Savings</title>
+<meta name="theme-color" content="#ff6fae">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Wishlist">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Crect width='180' height='180' rx='40' fill='%23ff9ec7'/%3E%3Ctext x='90' y='128' font-size='110' text-anchor='middle'%3E%F0%9F%8E%81%3C/text%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64'%3E%3Crect width='64' height='64' rx='14' fill='%23ff9ec7'/%3E%3Ctext x='32' y='46' font-size='38' text-anchor='middle'%3E%F0%9F%8E%81%3C/text%3E%3C/svg%3E">
+<style>
+  :root{
+    --bg:#fdf3f8;
+    --card:#ffffff;
+    --ink:#4a3b52;
+    --muted:#9b8aa3;
+    --pink:#ff9ec7;
+    --pink-deep:#ff6fae;
+    --lilac:#c9b6f0;
+    --mint:#9ee6c8;
+    --mint-deep:#3fcf97;
+    --yellow:#ffe08a;
+    --shadow:0 10px 30px rgba(180,120,170,.18);
+    --radius:22px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:'Segoe UI','Quicksand',system-ui,sans-serif;
+    background:linear-gradient(160deg,#fdf3f8 0%,#f3f0ff 100%);
+    color:var(--ink);
+    min-height:100vh;
+    padding-bottom:60px;
+  }
+  header{
+    text-align:center;
+    padding:28px 16px 10px;
+  }
+  header h1{font-size:1.9rem;font-weight:800;letter-spacing:-.5px}
+  header h1 span{color:var(--pink-deep)}
+  header p{color:var(--muted);margin-top:4px;font-size:.95rem}
+
+  .tabs{
+    display:flex;gap:8px;justify-content:center;margin:18px auto 8px;
+    max-width:520px;padding:6px;background:#fff;border-radius:999px;
+    box-shadow:var(--shadow);width:fit-content;
+  }
+  .tab{
+    border:none;background:transparent;cursor:pointer;
+    padding:10px 22px;border-radius:999px;font-size:.95rem;font-weight:700;
+    color:var(--muted);transition:.2s;
+  }
+  .tab.active{background:linear-gradient(135deg,var(--pink),var(--lilac));color:#fff;box-shadow:0 6px 16px rgba(255,111,174,.35)}
+
+  main{max-width:760px;margin:0 auto;padding:14px 18px}
+  .page{display:none;animation:fade .35s ease}
+  .page.active{display:block}
+  @keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+  .savings-banner{
+    background:linear-gradient(135deg,#fff,#fdf0fa);
+    border-radius:var(--radius);padding:18px 22px;box-shadow:var(--shadow);
+    margin-bottom:18px;display:flex;align-items:center;justify-content:space-between;gap:12px;
+  }
+  .savings-banner small{color:var(--muted);font-weight:600}
+  .savings-banner .amt{font-size:1.5rem;font-weight:800;color:var(--mint-deep)}
+  .xpbar{height:7px;width:120px;background:#f0e8f5;border-radius:999px;overflow:hidden;margin:5px auto 0}
+  .xpbar > i{display:block;height:100%;width:0;border-radius:999px;background:linear-gradient(90deg,var(--lilac),var(--pink-deep));transition:width .5s}
+
+  .card{
+    background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);
+    padding:20px;margin-bottom:18px;position:relative;overflow:hidden;
+  }
+  .card.done{outline:3px solid var(--mint);}
+  .card.cooling{background:linear-gradient(135deg,#fff,#eef4ff)}
+  .cool-box{background:#eef4ff;border-radius:14px;padding:16px;margin-top:12px;text-align:center;font-size:.95rem}
+  .cool-box .cool-em{font-size:2.2rem;margin-bottom:6px}
+  .cool-box b{color:var(--lilac);font-size:1.02rem}
+  .card-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+  .card-top h3{font-size:1.2rem;font-weight:800}
+  .price{font-size:1.15rem;font-weight:800;color:var(--pink-deep);white-space:nowrap}
+  .sub{color:var(--muted);font-size:.88rem;margin-top:2px}
+
+  .progress-wrap{margin:14px 0 6px}
+  .bar{height:14px;background:#f0e8f5;border-radius:999px;overflow:hidden}
+  .bar > i{display:block;height:100%;border-radius:999px;
+    background:linear-gradient(90deg,var(--pink),var(--lilac));transition:width .4s}
+  .progress-meta{display:flex;justify-content:space-between;font-size:.82rem;color:var(--muted);margin-top:6px;font-weight:600}
+
+  .compare{
+    background:#f8f4ff;border-radius:14px;padding:10px 14px;margin-top:12px;
+    font-size:.85rem;color:var(--ink);font-weight:600;
+  }
+  .compare b{color:var(--pink-deep)}
+  .compare.afford{background:#eafaf3}
+  .compare.afford b{color:var(--mint-deep)}
+
+  .months{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;margin-top:14px}
+  .month{
+    display:flex;align-items:center;gap:9px;background:#faf6fd;border-radius:12px;
+    padding:9px 11px;cursor:pointer;border:2px solid transparent;transition:.15s;user-select:none;
+  }
+  .month:hover{border-color:var(--lilac)}
+  .month.checked{background:#eafaf3;border-color:var(--mint)}
+  .month .box{
+    width:22px;height:22px;border-radius:7px;border:2px solid var(--lilac);
+    flex:none;display:grid;place-items:center;font-size:13px;color:#fff;transition:.15s;
+  }
+  .month.checked .box{background:var(--mint-deep);border-color:var(--mint-deep)}
+  .month .lbl{font-size:.8rem;line-height:1.2}
+  .month .lbl b{display:block;font-size:.85rem}
+  .month .lbl span{color:var(--muted);font-weight:600}
+  .month.due .lbl b{color:var(--pink-deep)}
+
+  .badge{
+    display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg,var(--mint),var(--mint-deep));
+    color:#fff;font-weight:800;padding:8px 16px;border-radius:999px;font-size:.9rem;
+    margin-top:14px;box-shadow:0 6px 16px rgba(63,207,151,.4);animation:pop .4s;
+  }
+  @keyframes pop{0%{transform:scale(.8)}60%{transform:scale(1.08)}100%{transform:scale(1)}}
+
+  .row{display:flex;gap:10px;flex-wrap:wrap}
+  .field{flex:1;min-width:130px;margin-bottom:12px}
+  .field label{display:block;font-size:.8rem;font-weight:700;color:var(--muted);margin-bottom:5px}
+  input,select{
+    width:100%;padding:11px 13px;border:2px solid #efe6f3;border-radius:13px;
+    font-size:.95rem;font-family:inherit;color:var(--ink);background:#fff;outline:none;transition:.15s;
+  }
+  input:focus,select:focus{border-color:var(--pink)}
+  .btn{
+    border:none;cursor:pointer;font-family:inherit;font-weight:800;font-size:.95rem;
+    padding:12px 22px;border-radius:14px;color:#fff;
+    background:linear-gradient(135deg,var(--pink-deep),var(--lilac));
+    box-shadow:0 6px 16px rgba(255,111,174,.35);transition:.15s;
+  }
+  .btn:hover{transform:translateY(-1px)}
+  .btn.ghost{background:#fff;color:var(--pink-deep);box-shadow:none;border:2px solid #f3e6f0;padding:8px 14px;font-size:.85rem}
+  .btn.tiny{padding:6px 12px;font-size:.78rem;border-radius:10px}
+  .btn.danger{background:#fff;color:#e87aa0;border:2px solid #ffdfe9;box-shadow:none}
+
+  .estimate{font-size:.85rem;color:var(--muted);font-weight:600;margin:-2px 0 12px}
+  .estimate b{color:var(--pink-deep)}
+
+  .empty{text-align:center;color:var(--muted);padding:40px 20px;font-weight:600}
+  .empty .em{font-size:2.4rem;display:block;margin-bottom:8px}
+
+  /* net worth accounts */
+  .acct{display:flex;align-items:center;gap:10px;background:#faf6fd;border-radius:13px;padding:10px 13px;margin-bottom:9px}
+  .acct .nm{flex:1;font-weight:700}
+  .acct .bl{font-weight:800;color:var(--mint-deep)}
+  .nw-total{font-size:2rem;font-weight:800;color:var(--mint-deep);text-align:center;margin:6px 0}
+  .section-title{font-weight:800;font-size:1.05rem;margin:6px 0 12px}
+
+  .toast{
+    position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(120px);
+    background:var(--ink);color:#fff;padding:14px 22px;border-radius:14px;font-weight:700;
+    box-shadow:0 10px 30px rgba(0,0,0,.25);transition:.35s;z-index:99;font-size:.9rem;max-width:90%;
+  }
+  .toast.show{transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+<header>
+  <h1>My <span>Wishlist</span> &amp; Savings</h1>
+  <p>Save up month by month — then treat yourself ✨</p>
+</header>
+
+<div class="tabs">
+  <button class="tab active" data-tab="wishlist">🎁 Wishlist</button>
+  <button class="tab" data-tab="networth">💰 Net Worth</button>
+</div>
+
+<main>
+  <!-- WISHLIST PAGE -->
+  <section id="wishlist" class="page active">
+    <div class="savings-banner">
+      <div><small>Your savings now</small><div class="amt" id="bannerSavings">Rp0</div></div>
+      <div style="text-align:center">
+        <small id="levelName">Lv 1 · Sprout 🌱</small>
+        <div class="amt" id="bannerXP" style="color:var(--lilac)">0 XP</div>
+        <div class="xpbar"><i id="xpFill"></i></div>
+      </div>
+      <div style="text-align:right">
+        <small>🔥 Streak</small><div class="amt" id="bannerStreak" style="color:var(--pink-deep)">0</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="section-title">➕ Add something you want</div>
+      <div class="row">
+        <div class="field" style="flex:2;min-width:180px">
+          <label>What is it?</label>
+          <input id="wName" placeholder="e.g. New camera">
+        </div>
+        <div class="field">
+          <label>Price (Rp)</label>
+          <input id="wPrice" type="number" min="0" placeholder="5000000">
+        </div>
+      </div>
+      <div class="row">
+        <div class="field">
+          <label>Pay over how many months?</label>
+          <input id="wMonths" type="number" min="1" value="6">
+        </div>
+        <div class="field">
+          <label>Deposit day each month</label>
+          <input id="wDate" type="date">
+        </div>
+      </div>
+      <div class="estimate" id="wEstimate"></div>
+      <button class="btn" id="addBtn">Add to wishlist</button>
+    </div>
+
+    <div id="list"></div>
+  </section>
+
+  <!-- NET WORTH PAGE -->
+  <section id="networth" class="page">
+    <div class="card">
+      <div class="section-title">💰 Total savings / net worth</div>
+      <div class="nw-total" id="nwTotal">Rp0</div>
+      <p class="sub" style="text-align:center">Add your accounts below. Update the balances whenever you like — your wishlist compares against this total.</p>
+    </div>
+
+    <div class="card">
+      <div class="section-title">Your accounts</div>
+      <div id="acctList"></div>
+      <div class="row" style="margin-top:6px">
+        <div class="field" style="flex:2;min-width:160px">
+          <label>Account name</label>
+          <input id="acctName" placeholder="e.g. Bank savings, Cash, E-wallet">
+        </div>
+        <div class="field">
+          <label>Balance (Rp)</label>
+          <input id="acctBal" type="number" min="0" placeholder="10000000">
+        </div>
+      </div>
+      <button class="btn" id="addAcct">Add account</button>
+    </div>
+  </section>
+</main>
+
+<div class="toast" id="toast"></div>
+<canvas id="cfx" style="position:fixed;inset:0;pointer-events:none;z-index:90;display:none"></canvas>
+
+<script>
+/* ---------- confetti ---------- */
+function confetti(){
+  const c=document.getElementById('cfx'); c.style.display='block';
+  c.width=innerWidth; c.height=innerHeight; const ctx=c.getContext('2d');
+  const cols=['#ff9ec7','#c9b6f0','#9ee6c8','#ffe08a','#ff6fae'];
+  const P=Array.from({length:140},()=>({x:Math.random()*c.width,y:-20-Math.random()*c.height,
+    r:5+Math.random()*7,vx:-2+Math.random()*4,vy:2+Math.random()*4,
+    col:cols[Math.random()*cols.length|0],rot:Math.random()*6,vr:-.2+Math.random()*.4}));
+  let t=0;
+  (function loop(){
+    ctx.clearRect(0,0,c.width,c.height); t++;
+    P.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.rot+=p.vr;
+      ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.rot);ctx.fillStyle=p.col;
+      ctx.fillRect(-p.r/2,-p.r/2,p.r,p.r*1.6);ctx.restore();});
+    if(t<160) requestAnimationFrame(loop); else c.style.display='none';
+  })();
+}
+
+const fmt = n => 'Rp' + (Number(n)||0).toLocaleString('id-ID');
+const $ = s => document.querySelector(s);
+const todayISO = () => new Date().toISOString().slice(0,10);
+
+let state = load();
+
+function load(){
+  try{ return JSON.parse(localStorage.getItem('wishlistApp')) || blank(); }
+  catch(e){ return blank(); }
+}
+function blank(){ return { items:[], accounts:[], xp:0, streak:0 }; }
+
+/* ---------- gamification: XP & levels ---------- */
+const LEVELS=[
+  {min:0,name:'Sprout 🌱'},{min:50,name:'Saver 🪙'},{min:150,name:'Planner 📋'},
+  {min:300,name:'Disciplined 💪'},{min:500,name:'Money Monk 🧘'},{min:800,name:'Wealth Wizard 🧙'}
+];
+function levelFor(xp){ let L=LEVELS[0],i=0; LEVELS.forEach((l,k)=>{if(xp>=l.min){L=l;i=k;}});
+  const next=LEVELS[i+1]; return {lvl:i+1,name:L.name,cur:L.min,next:next?next.min:L.min}; }
+function addXP(n){ state.xp=(state.xp||0)+n; }
+function renderXP(){
+  const xp=state.xp||0, L=levelFor(xp);
+  $('#levelName').textContent='Lv '+L.lvl+' · '+L.name;
+  $('#bannerXP').textContent=xp+' XP';
+  $('#bannerStreak').textContent=(state.streak||0);
+  const span=L.next>L.cur?(xp-L.cur)/(L.next-L.cur)*100:100;
+  $('#xpFill').style.width=Math.min(100,span)+'%';
+}
+function save(){ localStorage.setItem('wishlistApp', JSON.stringify(state)); }
+
+function toast(msg){
+  const t=$('#toast'); t.textContent=msg; t.classList.add('show');
+  clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove('show'),3200);
+}
+
+/* ---------- tabs ---------- */
+document.querySelectorAll('.tab').forEach(b=>{
+  b.onclick=()=>{
+    document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+    document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));
+    b.classList.add('active');
+    $('#'+b.dataset.tab).classList.add('active');
+  };
+});
+
+/* ---------- net worth ---------- */
+function totalSavings(){ return state.accounts.reduce((s,a)=>s+(Number(a.bal)||0),0); }
+
+function renderNW(){
+  const box=$('#acctList');
+  box.innerHTML = state.accounts.length ? '' :
+    '<div class="empty"><span class="em">🐷</span>No accounts yet. Add one below!</div>';
+  state.accounts.forEach((a,i)=>{
+    const el=document.createElement('div'); el.className='acct';
+    el.innerHTML=`<span class="nm">${esc(a.name)}</span>
+      <span class="bl">${fmt(a.bal)}</span>
+      <button class="btn ghost tiny" data-edit="${i}">Edit</button>
+      <button class="btn danger tiny" data-del="${i}">✕</button>`;
+    box.appendChild(el);
+  });
+  $('#nwTotal').textContent = fmt(totalSavings());
+  $('#bannerSavings').textContent = fmt(totalSavings());
+  box.querySelectorAll('[data-del]').forEach(b=>b.onclick=()=>{
+    state.accounts.splice(+b.dataset.del,1); save(); renderNW(); renderList();
+  });
+  box.querySelectorAll('[data-edit]').forEach(b=>b.onclick=()=>{
+    const a=state.accounts[+b.dataset.edit];
+    const v=prompt('New balance for '+a.name+' (Rp):', a.bal);
+    if(v!==null){ a.bal=Math.max(0,Number(v)||0); save(); renderNW(); renderList(); }
+  });
+}
+$('#addAcct').onclick=()=>{
+  const name=$('#acctName').value.trim(), bal=Number($('#acctBal').value)||0;
+  if(!name) return toast('Give the account a name 🙂');
+  state.accounts.push({name,bal}); save();
+  $('#acctName').value=''; $('#acctBal').value='';
+  renderNW(); renderList(); toast('Account added 💰');
+};
+
+/* ---------- wishlist ---------- */
+function buildMonths(start, n){
+  const out=[]; const d=new Date(start);
+  const day=d.getDate();
+  for(let i=0;i<n;i++){
+    const m=new Date(d.getFullYear(), d.getMonth()+i, 1);
+    const last=new Date(m.getFullYear(), m.getMonth()+1, 0).getDate();
+    m.setDate(Math.min(day,last));
+    out.push({date:m.toISOString().slice(0,10), paid:false});
+  }
+  return out;
+}
+
+function updateEstimate(){
+  const p=Number($('#wPrice').value)||0, m=Math.max(1,Number($('#wMonths').value)||1);
+  $('#wEstimate').innerHTML = p ? `That's <b>${fmt(Math.ceil(p/m))}</b> per month for ${m} month${m>1?'s':''}.` : '';
+}
+['#wPrice','#wMonths'].forEach(s=>$(s).addEventListener('input',updateEstimate));
+
+$('#addBtn').onclick=()=>{
+  const name=$('#wName').value.trim();
+  const price=Number($('#wPrice').value)||0;
+  const months=Math.max(1,Number($('#wMonths').value)||1);
+  const start=$('#wDate').value || todayISO();
+  if(!name) return toast('What do you want to save for? 🎁');
+  if(!price) return toast('Add a price 💸');
+  state.items.push({id:Date.now(),name,price,months,start,created:Date.now(),confirmed:false,plan:buildMonths(start,months)});
+  save();
+  $('#wName').value=''; $('#wPrice').value=''; $('#wMonths').value='6'; $('#wEstimate').textContent='';
+  renderList(); toast('Added 🧊 Now let it cool off before you commit.');
+};
+
+function renderList(){
+  const list=$('#list');
+  list.innerHTML='';
+  let doneCount=0;
+  if(!state.items.length){
+    list.innerHTML='<div class="empty"><span class="em">🛍️</span>Your wishlist is empty.<br>Add something you\'re dreaming of above!</div>';
+  }
+  const savings=totalSavings();
+  const COOL_DAYS=3, COOL_MS=COOL_DAYS*86400000;
+  state.items.forEach(it=>{
+    // ----- anti-impulse cooling-off gate -----
+    if(!it.confirmed){
+      const elapsed=Date.now()-(it.created||Date.now());
+      const ready=elapsed>=COOL_MS;
+      const hrsLeft=Math.ceil((COOL_MS-elapsed)/3600000);
+      const card=document.createElement('div'); card.className='card cooling';
+      card.innerHTML=`
+        <div class="card-top">
+          <div><h3>${esc(it.name)}</h3><div class="sub">${fmt(Math.ceil(it.price/it.months))}/mo · ${it.months} months planned</div></div>
+          <div class="price">${fmt(it.price)}</div>
+        </div>
+        <div class="cool-box">
+          <div class="cool-em">${ready?'🤔':'🧊'}</div>
+          ${ready
+            ? `<b>Cooling-off done.</b> Do you still want this?<br><span class="sub">Impulse fades — real wants stick around. If it's still a yes, lock in your savings plan.</span>
+               <div style="margin-top:12px"><button class="btn" data-confirm="${it.id}">Yes, I still want it 💚</button>
+               <button class="btn danger tiny" data-remove="${it.id}" style="margin-left:8px">Let it go</button></div>`
+            : `<b>Cooling off — ~${hrsLeft}h left.</b><br><span class="sub">Sit with this want for ${COOL_DAYS} days before committing. No impulse buys here 🙂</span>
+               <div style="margin-top:12px"><button class="btn danger tiny" data-remove="${it.id}">Changed my mind</button></div>`}
+        </div>`;
+      list.appendChild(card);
+      return;
+    }
+    const paid=it.plan.filter(p=>p.paid).length;
+    const saved=Math.round(it.price * paid / it.months);
+    const pct=Math.round(paid/it.months*100);
+    const complete=paid>=it.months;
+    if(complete) doneCount++;
+
+    const card=document.createElement('div');
+    card.className='card'+(complete?' done':'');
+
+    // comparison vs savings
+    let cmp;
+    if(savings<=0){
+      cmp=`<div class="compare">Add your savings on the <b>Net Worth</b> tab to see how close you are 💡</div>`;
+    } else if(savings>=it.price){
+      cmp=`<div class="compare afford">Good news — your savings (<b>${fmt(savings)}</b>) already cover this! That's <b>${Math.round(savings/it.price*100)}%</b> of the price. 🎉</div>`;
+    } else {
+      cmp=`<div class="compare">This is <b>${Math.round(it.price/savings*100)}%</b> of your current savings (${fmt(savings)}). You'd have <b>${fmt(it.price-savings)}</b> left to cover.</div>`;
+    }
+
+    const monthsHTML = it.plan.map((p,i)=>{
+      const dt=new Date(p.date+'T00:00:00');
+      const lbl=dt.toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'2-digit'});
+      const due = !p.paid && p.date<=todayISO();
+      return `<div class="month ${p.paid?'checked':''} ${due?'due':''}" data-id="${it.id}" data-i="${i}">
+        <span class="box">${p.paid?'✓':''}</span>
+        <span class="lbl"><b>Month ${i+1}</b><span>${lbl}${due?' · due!':''}</span></span>
+      </div>`;
+    }).join('');
+
+    card.innerHTML=`
+      <div class="card-top">
+        <div><h3>${esc(it.name)}</h3>
+        <div class="sub">${fmt(Math.ceil(it.price/it.months))}/mo · ${it.months} months</div></div>
+        <div class="price">${fmt(it.price)}</div>
+      </div>
+      <div class="progress-wrap">
+        <div class="bar"><i style="width:${pct}%"></i></div>
+        <div class="progress-meta"><span>Saved ${fmt(saved)} of ${fmt(it.price)}</span><span>${paid}/${it.months} months</span></div>
+      </div>
+      ${cmp}
+      ${complete?`<div class="badge">🎉 All saved up — you can buy it now!</div>`:''}
+      <div class="months">${monthsHTML}</div>
+      <div style="margin-top:14px;text-align:right">
+        <button class="btn danger tiny" data-remove="${it.id}">Remove</button>
+      </div>`;
+    list.appendChild(card);
+  });
+
+  $('#bannerDone').textContent=doneCount;
+
+  renderXP();
+
+  // confirm after cooling-off
+  list.querySelectorAll('[data-confirm]').forEach(b=>b.onclick=()=>{
+    const it=state.items.find(x=>x.id==b.dataset.confirm);
+    it.confirmed=true; addXP(5); save(); renderXP(); renderList();
+    toast('Locked in 🔒 +5 XP. Now save it up, month by month!');
+  });
+
+  // wire checkboxes
+  list.querySelectorAll('.month').forEach(m=>{
+    m.onclick=()=>{
+      const it=state.items.find(x=>x.id==m.dataset.id);
+      const cell=it.plan[+m.dataset.i];
+      const before=it.plan.filter(p=>p.paid).length;
+      cell.paid=!cell.paid;
+      const after=it.plan.filter(p=>p.paid).length;
+      if(cell.paid){
+        addXP(10); state.streak=(state.streak||0)+1;
+        if(after===it.months){
+          addXP(50); confetti();
+          save(); renderList();
+          toast('🎉 '+it.name+' fully funded — +50 XP! You earned this. Go buy it!');
+          return;
+        }
+        toast('Deposit logged 💪 +10 XP · 🔥 '+state.streak+' streak');
+      } else {
+        state.streak=Math.max(0,(state.streak||0)-1);
+      }
+      save(); renderList();
+    };
+  });
+  list.querySelectorAll('[data-remove]').forEach(b=>b.onclick=()=>{
+    if(confirm('Remove this from your wishlist?')){
+      state.items=state.items.filter(x=>x.id!=b.dataset.remove); save(); renderList();
+    }
+  });
+}
+
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+
+/* init */
+$('#wDate').value=todayISO();
+updateEstimate();
+renderNW();
+renderList();
+renderXP();
+</script>
+</body>
+</html>
