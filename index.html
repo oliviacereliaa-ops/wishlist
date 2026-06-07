@@ -4,32 +4,33 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>My Wishlist & Savings</title>
-<meta name="theme-color" content="#ff6fae">
+<meta name="theme-color" content="#8ecae6">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Wishlist">
-<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Crect width='180' height='180' rx='40' fill='%23ff9ec7'/%3E%3Ctext x='90' y='128' font-size='110' text-anchor='middle'%3E%F0%9F%8E%81%3C/text%3E%3C/svg%3E">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64'%3E%3Crect width='64' height='64' rx='14' fill='%23ff9ec7'/%3E%3Ctext x='32' y='46' font-size='38' text-anchor='middle'%3E%F0%9F%8E%81%3C/text%3E%3C/svg%3E">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Crect width='180' height='180' rx='40' fill='%238ecae6'/%3E%3Ctext x='90' y='128' font-size='110' text-anchor='middle'%3E%F0%9F%8E%81%3C/text%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64'%3E%3Crect width='64' height='64' rx='14' fill='%238ecae6'/%3E%3Ctext x='32' y='46' font-size='38' text-anchor='middle'%3E%F0%9F%8E%81%3C/text%3E%3C/svg%3E">
 <style>
   :root{
-    --bg:#fdf3f8;
+    --bg:#fdf9ef;
     --card:#ffffff;
-    --ink:#4a3b52;
-    --muted:#9b8aa3;
-    --pink:#ff9ec7;
-    --pink-deep:#ff6fae;
-    --lilac:#c9b6f0;
-    --mint:#9ee6c8;
-    --mint-deep:#3fcf97;
+    --ink:#37505c;
+    --muted:#8aa3ae;
+    --pink:#8ecae6;       /* light blue (primary) */
+    --pink-deep:#4a93c4;  /* deep blue (accents) */
+    --lilac:#bfe3f2;      /* pale blue */
+    --mint:#a7e0c4;
+    --mint-deep:#3fb997;
     --yellow:#ffe08a;
-    --shadow:0 10px 30px rgba(180,120,170,.18);
+    --cream:#f6ecd6;
+    --shadow:0 10px 30px rgba(120,160,180,.18);
     --radius:22px;
   }
   *{box-sizing:border-box;margin:0;padding:0}
   body{
     font-family:'Segoe UI','Quicksand',system-ui,sans-serif;
-    background:linear-gradient(160deg,#fdf3f8 0%,#f3f0ff 100%);
+    background:linear-gradient(160deg,#fdf9ef 0%,#e8f3fb 100%);
     color:var(--ink);
     min-height:100vh;
     padding-bottom:60px;
@@ -52,7 +53,7 @@
     padding:10px 22px;border-radius:999px;font-size:.95rem;font-weight:700;
     color:var(--muted);transition:.2s;
   }
-  .tab.active{background:linear-gradient(135deg,var(--pink),var(--lilac));color:#fff;box-shadow:0 6px 16px rgba(255,111,174,.35)}
+  .tab.active{background:linear-gradient(135deg,var(--pink-deep),var(--pink));color:#fff;box-shadow:0 6px 16px rgba(74,147,196,.32)}
 
   main{max-width:760px;margin:0 auto;padding:14px 18px}
   .page{display:none;animation:fade .35s ease}
@@ -60,14 +61,31 @@
   @keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 
   .savings-banner{
-    background:linear-gradient(135deg,#fff,#fdf0fa);
+    background:linear-gradient(135deg,#fff,#eef6fb);
     border-radius:var(--radius);padding:18px 22px;box-shadow:var(--shadow);
     margin-bottom:18px;display:flex;align-items:center;justify-content:space-between;gap:12px;
   }
   .savings-banner small{color:var(--muted);font-weight:600}
   .savings-banner .amt{font-size:1.5rem;font-weight:800;color:var(--mint-deep)}
-  .xpbar{height:7px;width:120px;background:#f0e8f5;border-radius:999px;overflow:hidden;margin:5px auto 0}
+  .xpbar{height:7px;width:120px;background:#e6eef2;border-radius:999px;overflow:hidden;margin:5px auto 0}
   .xpbar > i{display:block;height:100%;width:0;border-radius:999px;background:linear-gradient(90deg,var(--lilac),var(--pink-deep));transition:width .5s}
+
+  /* ---- tally summary ---- */
+  .tally{background:linear-gradient(135deg,#fff,#f6ecd6);border-radius:var(--radius);
+    box-shadow:var(--shadow);padding:18px;margin-bottom:18px}
+  .tally .section-title{margin-bottom:12px}
+  .tally-grid{display:flex;gap:10px;flex-wrap:wrap}
+  .tstat{flex:1;min-width:88px;text-align:center;background:#fff;border-radius:15px;padding:12px 8px}
+  .tstat .v{font-size:1.15rem;font-weight:800;color:var(--pink-deep)}
+  .tstat .v.green{color:var(--mint-deep)}
+  .tstat .k{font-size:.72rem;color:var(--muted);font-weight:700;margin-top:3px}
+  .tally .bar{margin-top:14px}
+  .tally-pct{text-align:center;font-weight:800;color:var(--pink-deep);margin-top:8px;font-size:.9rem}
+
+  /* ---- per-item percent chip ---- */
+  .pct-chip{display:inline-block;margin-top:6px;background:var(--pink-deep);color:#fff;
+    font-weight:800;font-size:.8rem;padding:3px 11px;border-radius:999px}
+  .pct-chip.full{background:var(--mint-deep)}
 
   .card{
     background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);
@@ -84,13 +102,13 @@
   .sub{color:var(--muted);font-size:.88rem;margin-top:2px}
 
   .progress-wrap{margin:14px 0 6px}
-  .bar{height:14px;background:#f0e8f5;border-radius:999px;overflow:hidden}
+  .bar{height:14px;background:#e6eef2;border-radius:999px;overflow:hidden}
   .bar > i{display:block;height:100%;border-radius:999px;
-    background:linear-gradient(90deg,var(--pink),var(--lilac));transition:width .4s}
+    background:linear-gradient(90deg,var(--pink),var(--pink-deep));transition:width .4s}
   .progress-meta{display:flex;justify-content:space-between;font-size:.82rem;color:var(--muted);margin-top:6px;font-weight:600}
 
   .compare{
-    background:#f8f4ff;border-radius:14px;padding:10px 14px;margin-top:12px;
+    background:#eef6fb;border-radius:14px;padding:10px 14px;margin-top:12px;
     font-size:.85rem;color:var(--ink);font-weight:600;
   }
   .compare b{color:var(--pink-deep)}
@@ -99,7 +117,7 @@
 
   .months{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;margin-top:14px}
   .month{
-    display:flex;align-items:center;gap:9px;background:#faf6fd;border-radius:12px;
+    display:flex;align-items:center;gap:9px;background:#f7f1e2;border-radius:12px;
     padding:9px 11px;cursor:pointer;border:2px solid transparent;transition:.15s;user-select:none;
   }
   .month:hover{border-color:var(--lilac)}
@@ -125,20 +143,20 @@
   .field{flex:1;min-width:130px;margin-bottom:12px}
   .field label{display:block;font-size:.8rem;font-weight:700;color:var(--muted);margin-bottom:5px}
   input,select{
-    width:100%;padding:11px 13px;border:2px solid #efe6f3;border-radius:13px;
+    width:100%;padding:11px 13px;border:2px solid #e1e9ec;border-radius:13px;
     font-size:.95rem;font-family:inherit;color:var(--ink);background:#fff;outline:none;transition:.15s;
   }
   input:focus,select:focus{border-color:var(--pink)}
   .btn{
     border:none;cursor:pointer;font-family:inherit;font-weight:800;font-size:.95rem;
     padding:12px 22px;border-radius:14px;color:#fff;
-    background:linear-gradient(135deg,var(--pink-deep),var(--lilac));
-    box-shadow:0 6px 16px rgba(255,111,174,.35);transition:.15s;
+    background:linear-gradient(135deg,var(--pink-deep),var(--pink));
+    box-shadow:0 6px 16px rgba(74,147,196,.32);transition:.15s;
   }
   .btn:hover{transform:translateY(-1px)}
-  .btn.ghost{background:#fff;color:var(--pink-deep);box-shadow:none;border:2px solid #f3e6f0;padding:8px 14px;font-size:.85rem}
+  .btn.ghost{background:#fff;color:var(--pink-deep);box-shadow:none;border:2px solid #dceaf2;padding:8px 14px;font-size:.85rem}
   .btn.tiny{padding:6px 12px;font-size:.78rem;border-radius:10px}
-  .btn.danger{background:#fff;color:#e87aa0;border:2px solid #ffdfe9;box-shadow:none}
+  .btn.danger{background:#fff;color:#c9756f;border:2px solid #f0ddd8;box-shadow:none}
 
   .estimate{font-size:.85rem;color:var(--muted);font-weight:600;margin:-2px 0 12px}
   .estimate b{color:var(--pink-deep)}
@@ -147,7 +165,7 @@
   .empty .em{font-size:2.4rem;display:block;margin-bottom:8px}
 
   /* net worth accounts */
-  .acct{display:flex;align-items:center;gap:10px;background:#faf6fd;border-radius:13px;padding:10px 13px;margin-bottom:9px}
+  .acct{display:flex;align-items:center;gap:10px;background:#f7f1e2;border-radius:13px;padding:10px 13px;margin-bottom:9px}
   .acct .nm{flex:1;font-weight:700}
   .acct .bl{font-weight:800;color:var(--mint-deep)}
   .nw-total{font-size:2rem;font-weight:800;color:var(--mint-deep);text-align:center;margin:6px 0}
@@ -250,7 +268,7 @@
 function confetti(){
   const c=document.getElementById('cfx'); c.style.display='block';
   c.width=innerWidth; c.height=innerHeight; const ctx=c.getContext('2d');
-  const cols=['#ff9ec7','#c9b6f0','#9ee6c8','#ffe08a','#ff6fae'];
+  const cols=['#8ecae6','#4a93c4','#a7e0c4','#ffe08a','#bfe3f2'];
   const P=Array.from({length:140},()=>({x:Math.random()*c.width,y:-20-Math.random()*c.height,
     r:5+Math.random()*7,vx:-2+Math.random()*4,vy:2+Math.random()*4,
     col:cols[Math.random()*cols.length|0],rot:Math.random()*6,vr:-.2+Math.random()*.4}));
@@ -384,6 +402,31 @@ function renderList(){
   }
   const savings=totalSavings();
   const COOL_DAYS=3, COOL_MS=COOL_DAYS*86400000;
+
+  // ----- tally across everything -----
+  if(state.items.length){
+    let tVal=0,tSaved=0,tDone=0;
+    state.items.forEach(it=>{
+      tVal+=it.price;
+      const pd=it.plan.filter(p=>p.paid).length;
+      tSaved+=Math.round(it.price*pd/it.months);
+      if(pd>=it.months) tDone++;
+    });
+    const tPct=tVal?Math.round(tSaved/tVal*100):0;
+    const tally=document.createElement('div'); tally.className='tally';
+    tally.innerHTML=`
+      <div class="section-title">📊 Everything tallied</div>
+      <div class="tally-grid">
+        <div class="tstat"><div class="v">${state.items.length}</div><div class="k">ITEMS</div></div>
+        <div class="tstat"><div class="v green">${tDone}</div><div class="k">READY TO BUY</div></div>
+        <div class="tstat"><div class="v">${fmt(tVal)}</div><div class="k">TOTAL GOAL</div></div>
+        <div class="tstat"><div class="v green">${fmt(tSaved)}</div><div class="k">SAVED SO FAR</div></div>
+      </div>
+      <div class="bar"><i style="width:${tPct}%"></i></div>
+      <div class="tally-pct">${tPct}% of all your wishlist goals saved 💪</div>`;
+    list.appendChild(tally);
+  }
+
   state.items.forEach(it=>{
     // ----- anti-impulse cooling-off gate -----
     if(!it.confirmed){
@@ -440,12 +483,13 @@ function renderList(){
     card.innerHTML=`
       <div class="card-top">
         <div><h3>${esc(it.name)}</h3>
-        <div class="sub">${fmt(Math.ceil(it.price/it.months))}/mo · ${it.months} months</div></div>
+        <div class="sub">${fmt(Math.ceil(it.price/it.months))}/mo · ${it.months} months</div>
+        <span class="pct-chip ${complete?'full':''}">${pct}% saved</span></div>
         <div class="price">${fmt(it.price)}</div>
       </div>
       <div class="progress-wrap">
         <div class="bar"><i style="width:${pct}%"></i></div>
-        <div class="progress-meta"><span>Saved ${fmt(saved)} of ${fmt(it.price)}</span><span>${paid}/${it.months} months</span></div>
+        <div class="progress-meta"><span><b>${pct}%</b> · ${fmt(saved)} of ${fmt(it.price)}</span><span>${paid}/${it.months} months</span></div>
       </div>
       ${cmp}
       ${complete?`<div class="badge">🎉 All saved up — you can buy it now!</div>`:''}
@@ -455,8 +499,6 @@ function renderList(){
       </div>`;
     list.appendChild(card);
   });
-
-  $('#bannerDone').textContent=doneCount;
 
   renderXP();
 
